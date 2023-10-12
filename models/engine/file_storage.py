@@ -28,16 +28,19 @@ class FileStorage:
         """serializes __objects to the JSON file"""
         obj = FileStorage.__objects
         dictio = {o: obj[o].to_dict() for o in obj.keys()}
-        with open(FileStorage.__file_path, "w", encodind="utf-8") as fl:
+        with open(FileStorage.__file_path, "w", encoding="utf-8") as fl:
             json.dump(dictio, fl)
 
     def reload(self):
         """ deserializes the JSON file to __objects"""
-        if not os.path.isfile(FileStorage.__file_path):
-            return
-        with open(FileStorage.__file_path, "r", encoding="utf-8") as fl:
-            dictio = json.load(fl)
-            for o in dictio.values():
-                cls_name = o["__class__"]
-                del o["__class__"]
-                self.new(eval(cls_name)(**o))
+        from models.base_model import BaseModel
+
+        classes = {'BaseModel': BaseModel}
+        try:
+            temp = {}
+            with open(FileStorage.__file_path, "r") as fl:
+                temp = json.load(fl)
+            for key, val in temp.items():
+                self.all()[key] = classes[val['__class__']](**val)
+        except FileNotFoundError:
+            pass
