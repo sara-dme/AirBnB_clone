@@ -5,10 +5,30 @@ from datetime import datetime
 
 
 class BaseModel:
-    """Define a class"""
+    """
+    Define a class BaseModel
+    Public instance methods:
+        -save(self): updates the public instance attribute
+        updated_at with the current datetime
+        -to_dict(self): returns a dictionary containing all
+        keys/values of __dict__ of the instance
+        -__str__: should print: [<class name>] (<self.id>) <self.__dict__>
+    """
 
     def __init__(self, *args, **kwargs):
-        """class constructor"""
+        """
+        class constructor
+        __init__(self, *args, **kwargs):
+            *args won’t be used
+            if kwargs is not empty:
+                *each key of this dictionary is an attribute name
+                *each value of this dictionary is the value of
+                this attribute name
+                *created_at and updated_at are strings in this dictionary:
+                You have to convert these strings into datetime object.
+            otherwise:
+                *create id and created_at
+        """
 
         if kwargs:
             for key, value in kwargs.items():
