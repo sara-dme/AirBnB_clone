@@ -5,7 +5,7 @@ import json
 import models
 import unittest
 from datetime import datetime
-from models.base_models import BaseModel
+from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
 
 
@@ -23,7 +23,7 @@ class TestFileStorage_instantiation(unittest.TestCase):
         self.assertEqual(dict, type(FileStorage._FileStorage__objects))
 
     def test_path_isPrivateString(self):
-        self.assertEqual(str, type(FileStorage._FileDtorage__file_path))
+        self.assertEqual(str, type(FileStorage._FileStorage__file_path))
 
     def test_init_storage(self):
         self.assertEqual(type(models.storage), FileStorage)
@@ -40,7 +40,7 @@ class TestFileStorage_methods(unittest.TestCase):
     def test_new(self):
         bm = BaseModel()
         models.storage.new(bm)
-        self.assertIn("BaseModel."+ bm.id, models.storage.all().keys())
+        self.assertIn("BaseModel." + bm.id, models.storage.all().keys())
         self.assertIn(bm, models.storage.all().values())
         with self.assertRaises(TypeError):
             models.storage.new(BaseModel(), 1)
@@ -50,7 +50,7 @@ class TestFileStorage_methods(unittest.TestCase):
         models.storage.new(bm)
         models.storage.save()
         txt = ""
-        with open ("file.json", "r") as f:
+        with open("file.json", "r") as f:
             txt = f.read()
             self.assertIn("BaseModel." + bm.id, txt)
         with self.assertRaises(TypeError):
@@ -67,4 +67,3 @@ class TestFileStorage_methods(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

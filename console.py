@@ -2,17 +2,25 @@
 """ Module for HBNB console """
 import cmd
 from models.base_model import BaseModel
+from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 from models import storage
 import json
 
 
 class HBNBCommand(cmd.Cmd):
     """ The class for the command interpreter"""
-    
+
     prompt = "(hbnb) "
 
-    classes = {'BaseModel': BaseModel}
-    
+    classes = {'BaseModel': BaseModel, 'User': User, 'Place': Place,
+               'state': State, 'City': City, 'Amenity': Amenity,
+               'Review': Review}
+
     def do_EOF(self, line):
         """EOF (End Of File) to exit program"""
         print()
@@ -29,13 +37,13 @@ class HBNBCommand(cmd.Cmd):
         elif arg not in HBNBCommand.classes:
             print("** class doesn't exist **")
         else:
-            bm = BaseModel() 
+            bm = BaseModel()
             bm.save()
             print(bm.id)
 
     def do_show(self, arg):
         """Print the string rpresentation of an instance"""
-        if arg =="" or arg is None:
+        if arg == "" or arg is None:
             print("** class name missing **")
         else:
             a = arg.split(' ')
@@ -49,7 +57,7 @@ class HBNBCommand(cmd.Cmd):
                     print("** no instance found **")
                 else:
                     print(line)
-    
+
     def do_destroy(self, arg):
         """ Delete an instance :destroy <class> <id>"""
         if arg == "" or arg is None:
@@ -85,7 +93,7 @@ class HBNBCommand(cmd.Cmd):
         print(print_list)
 
     def dp_update(self, arg):
-        """Update " certain object with new info"""       
+        """Update " certain object with new info"""
         if arg == "" or arg is None:
             print("** class name missing **")
         else:
@@ -98,6 +106,7 @@ class HBNBCommand(cmd.Cmd):
                 line = "{}.{}".format(a[0], a[1])
                 if line not in storage.all():
                     print("** no instance found **")
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
