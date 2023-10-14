@@ -1,6 +1,6 @@
 ## Welcome to the AirBnB clone project!
 
-![airbnb](web_static/images/65f4a1dd9c51265f49d0.png)
+![airbnb](65f4a1dd9c51265f49d0.png)
 
 ## AirBnB clone project
 The goal of the project is to deploy on your server a simple copy of the [AirBnB website](https://fr.airbnb.com/?_set_bev_on_new_domain=1696844089_NjYzNmY0Y2MzM2Y0)
