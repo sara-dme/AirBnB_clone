@@ -96,14 +96,6 @@ class HBNBCommand(cmd.Cmd):
                 print_list.append(str(v))
         print(print_list)
 
-    def do_arg(seld, arg):
-        """  """
-        a = arg.split(' ')
-        print("arg 0: {}".format(a[0]))
-        print("arg 1: {}".format(a[1]))
-        print("arg 2: {}".format(a[2]))
-        print("arg 3: {}".format(a[3]))
-
     def remove_quot(self, arg):
         """remove the quotations and commas from the arguments"""
         for i in range(len(arg)):
