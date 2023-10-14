@@ -83,6 +83,11 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, arg):
         """Prints all string representation of all instances"""
         print_list = []
+        instance_dict = storage.all()
+        if arg == "":
+            print_list = [str(i) for i in instance_dict.values()]
+            print(print_list)
+            return False
         if arg:
             arg = arg.split(' ')[0]
             if arg not in HBNBCommand.classes:
@@ -95,6 +100,14 @@ class HBNBCommand(cmd.Cmd):
             for k, v in storage._FileStorage__objects.items():
                 print_list.append(str(v))
         print(print_list)
+
+    def do_count(self, args):
+        """This counts the instance of a class"""
+        num_inst = 0
+        for k, v in storage._FileStorage__objects.items():
+            if args == k.split('.')[0]:
+                num_inst += 1
+        print(num_inst)
 
     def remove_quot(self, arg):
         """remove the quotations and commas from the arguments"""
