@@ -30,6 +30,10 @@ class HBNBCommand(cmd.Cmd):
         """Quit command to exit the program"""
         return True
 
+    def emptyline(self):
+        """an empty line doesn't do anything on Enter"""
+        pass
+
     def do_create(self, arg):
         """create an instance."""
         if arg is None or arg == "":
@@ -37,9 +41,9 @@ class HBNBCommand(cmd.Cmd):
         elif arg not in HBNBCommand.classes:
             print("** class doesn't exist **")
         else:
-            bm = BaseModel()
-            bm.save()
-            print(bm.id)
+            new = HBNBCommand.classes[arg]()
+            storage.save()
+            print(new.id)
 
     def do_show(self, arg):
         """Print the string rpresentation of an instance"""
@@ -92,20 +96,57 @@ class HBNBCommand(cmd.Cmd):
                 print_list.append(str(v))
         print(print_list)
 
-    def dp_update(self, arg):
+    def remove_quot(self, arg):
+        """remove the quotations and commas from the arguments"""
+        for i in range(len(arg)):
+            if arg[i][0] in ('"', "'"):
+                arg[i] = arg[i].replace('"', "").replace("'", "")
+        return arg
+
+    def do_update(self, arg):
         """Update " certain object with new info"""
+        instance_dict = storage.all()
+
         if arg == "" or arg is None:
             print("** class name missing **")
         else:
             a = arg.split(' ')
+            a = self.remove_quot(a)
             if a[0] not in HBNBCommand.classes:
                 print("** class doesn't exist **")
-            elif len(a) == 1:
-                print("** instance id missing **")
+                return
             else:
-                line = "{}.{}".format(a[0], a[1])
-                if line not in storage.all():
-                    print("** no instance found **")
+                classname = a[0]
+
+            if len(a) == 1:
+                print("** instance id missing **")
+                return
+            else:
+                uid = a[1]
+
+            key = classname + "." + uid
+
+            if key not in storage.all():
+                print("** no instance found **")
+                return
+
+            if len(a) == 2:
+                print("** attribute name missing **")
+                return
+
+            if len(a) == 3:
+                try:
+                    type(eval(a[2])) != dict
+                except NameError:
+                    print("** value missing **")
+                    return
+            new_attr = a[2]
+            if a[3].isdigit():
+                new_val = eval(a[3])
+            else:
+                new_val = a[3]
+            setattr(instance_dict[key], new_attr, new_val)
+            storage.save()
 
 
 if __name__ == '__main__':
