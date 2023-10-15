@@ -17,18 +17,18 @@ class FileStorage:
 
     def all(self):
         """Return the dictionary __objects"""
-        return FileStorage.__objects
+        return self.__objects
 
     def new(self, obj):
         """Set in __objects obj with key <obj class name>.id"""
         key = obj.__class__.__name__
-        FileStorage.__objects["{}.{}".format(key, obj.id)] = obj
+        self.__objects["{}.{}".format(key, obj.id)] = obj
 
     def save(self):
         """serializes __objects to the JSON file"""
-        obj = FileStorage.__objects
+        obj = self.__objects
         dictio = {o: obj[o].to_dict() for o in obj.keys()}
-        with open(FileStorage.__file_path, "w", encoding="utf-8") as fl:
+        with open(self.__file_path, "w", encoding="utf-8") as fl:
             json.dump(dictio, fl)
 
     def reload(self):
@@ -48,7 +48,7 @@ class FileStorage:
                   }
         try:
             temp = {}
-            with open(FileStorage.__file_path, "r") as fl:
+            with open(self.__file_path, "r") as fl:
                 temp = json.load(fl)
             for key, val in temp.items():
                 self.all()[key] = classes[val['__class__']](**val)
