@@ -7,6 +7,7 @@ import unittest
 from datetime import datetime
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
+from models import storage
 
 
 class TestFileStorage_instantiation(unittest.TestCase):
@@ -31,6 +32,20 @@ class TestFileStorage_instantiation(unittest.TestCase):
 
 class TestFileStorage_methods(unittest.TestCase):
     """Unittests for testing methods of FileStorage class"""
+
+    def setUp(self):
+        super().setUp()
+        self.file_path = storage._FileStorage__file_path
+        self.instance = BaseModel()
+        self._objs = storage._FileStorage__objects
+        self.keyname = "BaseModel." + self.instance.id
+
+    def tearDown(self):
+        super().tearDown()
+        try:
+            os.remove(self.file_path)
+        except FileNotFoundError:
+            pass
 
     def test_all(self):
         self.assertEqual(dict, type(models.storage.all()))
