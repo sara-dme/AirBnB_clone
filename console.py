@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """ Module for HBNB console """
 import cmd
+import sys
 from models.base_model import BaseModel
 from models.user import User
 from models.place import Place
@@ -9,6 +10,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 from models import storage
+from models.engine.file_storage import FileStorage
 import json
 
 
