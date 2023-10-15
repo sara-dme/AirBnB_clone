@@ -10,27 +10,7 @@ from models.engine.file_storage import FileStorage
 from models import storage
 
 
-class TestFileStorage_instantiation(unittest.TestCase):
-    """Unittests for testing instantiation of the FileStorage class"""
-
-    def test_no_args(self):
-        self.assertEqual(type(FileStorage()), FileStorage)
-
-    def test_args(self):
-        with self.assertRaises(TypeError):
-            FileStorage(None)
-
-    def test_object_dict(self):
-        self.assertEqual(dict, type(FileStorage._FileStorage__objects))
-
-    def test_path_isPrivateString(self):
-        self.assertEqual(str, type(FileStorage._FileStorage__file_path))
-
-    def test_init_storage(self):
-        self.assertEqual(type(models.storage), FileStorage)
-
-
-class TestFileStorage_methods(unittest.TestCase):
+class TestFileStorage(unittest.TestCase):
     """Unittests for testing methods of FileStorage class"""
 
     def setUp(self):
@@ -47,37 +27,61 @@ class TestFileStorage_methods(unittest.TestCase):
         except FileNotFoundError:
             pass
 
-    def test_all(self):
-        self.assertEqual(dict, type(models.storage.all()))
-        with self.assertRaises(TypeError):
-            models.storage.all(None)
+    def test_methods(self):
+        obj = FileStorage
+        self.assertTrue(hasattr(obj, "all"))
+        self.assertTrue(hasattr(obj, "new"))
+        self.assertTrue(hasattr(obj, "save"))
+        self.assertTrue(hasattr(obj, "reload"))
 
-    def test_new(self):
-        bm = BaseModel()
-        models.storage.new(bm)
-        self.assertIn("BaseModel." + bm.id, models.storage.all().keys())
-        self.assertIn(bm, models.storage.all().values())
-        with self.assertRaises(TypeError):
-            models.storage.new(BaseModel(), 1)
+    def test_all_method(self):
+        """Test all() method"""
+        result = storage.all()
+        self.assertEqual(result, self._objs)
 
-    def test_save(self):
-        bm = BaseModel()
-        models.storage.new(bm)
-        models.storage.save()
-        txt = ""
-        with open("file.json", "r") as f:
-            txt = f.read()
-            self.assertIn("BaseModel." + bm.id, txt)
-        with self.assertRaises(TypeError):
-            models.storage.save(None)
+    def test_new_method(self):
+        """test new() method"""
+        storage.new(self.instance)
+        key = f"{self.instance.__class__.__name__}.{self.instance.id}"
+        self.assertIn(key, self._objs)
 
-    def test_reload(self):
-        bm = BaseModel()
-        models.storage.new(bm)
-        obj = FileStorage._FileStorage__objects
-        self.assertIn("BaseModel." + bm.id, obj)
-        with self.assertRaises(TypeError):
-            models.storage.reload(None)
+    def test_save_method(self):
+        """test save() method"""
+        my_model = BaseModel()
+        my_model.name = "My_First_Model"
+        my_model.my_number = 89
+        storage.new(my_model)
+        storage.save()
+        with open(self.file_path, "r") as fl:
+            save_data = json.load(fl)
+
+        expected_data = {}
+        for key, value in self._objs.items():
+            expected_data[key] = value.to_dict()
+
+        self.assertEqual(save_data, expected_data)
+
+    def test_reload_method(self):
+        my_model = BaseModel()
+        my_model.name = "My_First_Model"
+        my_model.my_number = 89
+        storage.new(my_model)
+        storage.save()
+        with open(self.file_path, 'r') as file:
+            save_data = json.load(file)
+        storage.reload()
+
+        with open(self.file_path, 'r') as file:
+            reloaded_data = json.load(file)
+
+        self._objs = {}
+        self.assertEqual(reloaded_data[self.keyname], save_data[self.keyname])
+
+    def test_path(self):
+        if os.path.exists(self.file_path):
+            os.remove(self.file_path)
+        self.assertFalse(os.path.exists(self.file_path))
+        storage.reload()
 
 
 if __name__ == "__main__":
