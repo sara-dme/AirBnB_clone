@@ -6,6 +6,7 @@ import unittest
 
 
 class TestUser(unittest.TestCase):
+    """Define unittest for User class"""
     def setUp(self):
         self.my_user = User()
 
