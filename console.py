@@ -31,7 +31,7 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         """an empty line doesn't do anything on Enter"""
         pass
-    
+
     def errors(self, line, cmd):
         """manages error message for user input"""
 
@@ -146,6 +146,38 @@ class HBNBCommand(cmd.Cmd):
                 new_value = args[3]
             setattr(instances_dict[x], new_key, new_value)
             storage.save()
+
+    def default(self, line):
+        """the default function """
+
+        cls = ["BaseModel", "User", "State", "City",
+               "Amenity", "Palce", "Review"
+               ]
+        cmd_list = {
+                "show": self.do_show, "all": self.do_all,
+                "destroy": self.do_destroy, "update": self.do_update,
+                "create": self.do_create, "count": self.do_count
+                }
+        ln = line.maketrans(";.(),{}:", "        ")
+        line = line.translate(ln)
+        try:
+            cls_name, cmd, *arg = line.split()
+        except Exception as e:
+            print("** Unknown syntax", file=sys.stderr)
+            return False
+
+        if cls_name in cls:
+            for key, val in cmd_list.items():
+                if cmd == key:
+                    if cmd == "count":
+                        val(cls_name)
+                    elif cmd == "update":
+                        for i in range(1, len(arg), 2):
+                            x = cls_name + ' ' + arg[0] + ' ' +\
+                                    arg[i] + ' ' + arg[i + 1]
+                            val(x)
+                    else:
+                        val(cls_name + ' ' + (" ".join(arg)))
 
 
 if __name__ == '__main__':
